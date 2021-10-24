@@ -21,19 +21,19 @@ template FishfarmVitalsReport
         -- regulators action based upon fish farm vital data
         controller regulator can
         -- Verfication and report looks good, farmer is following all protocols and data looks hygenic, no signs of Disease Transfer
-            Approve_Vitals: FishfarmVitalsReportId
+            nonconsuming Approve_Vitals: ContractId Verified
                 with 
-                    feedback: Text              
+                    customer: [Party]              
                 do 
-                    create this with note=feedback
+                    create Verified with ..
         
         -- Call for immediate healh inspection, maybe an outbreak or Disease Transfer probable to happen
-            nonconsuming Health_Inspection: ContractId FishFarmHealthInspection
+            Health_Inspection: ContractId FishFarmHealthInspection
                 with 
                     medicalTeam: Party
                     feedback: Text
                 do
-                    create FishFarmHealthInspection with  
+                    create FishFarmHealthInspection with
                         regulatorInContract = regulator
                         medicalTeam = medicalTeam
                         location = location
@@ -54,4 +54,9 @@ template FishFarmHealthInspection
         signatory regulatorInContract
         observer medicalTeam
         
-        
+template Verified with
+    regulator: Party
+    customer : [Party]    
+  where
+    signatory regulator
+    observer customer

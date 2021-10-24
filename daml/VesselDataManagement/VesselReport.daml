@@ -47,7 +47,7 @@ template ReportCDS with
 
       -- adds surveillance team as observer (like MCS ~ Monitoring, control and surveillance,
       -- RFMO ~ Regional Fisheries Management Organisation)
-      nonconsuming Suspicious : ContractId BlacklistVessel
+      Suspicious : ContractId BlacklistVessel
         with
           surveillanceTeam : [Party]
           category : SuspicionTypes
