@@ -1,0 +1,19 @@
+sdk-version: 1.16.0
+name: FishFarm
+source: daml
+#init-script: Main:setup
+parties:
+  - Farmer
+  - Vessel
+  - Commission
+  - Surveillance
+  - Buyer
+version: 0.0.1
+dependencies:
+  - daml-prim
+  - daml-stdlib
+  - daml-script
+sandbox-options:
+  - --wall-clock-time
+  - --ledgerid=test-daml-app-ledger
+

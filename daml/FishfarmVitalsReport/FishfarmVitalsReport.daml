@@ -1,0 +1,57 @@
+module FishfarmVitalsReport.FishfarmVitalsReport where
+
+import DataStructure.FishVitals
+
+type FishfarmVitalsReportId = ContractId FishfarmVitalsReport
+
+template FishfarmVitalsReport 
+    with
+        farmer : Party
+        regulator: Party
+        location: FishFarmLocation
+        buyer: [Party]
+        vitals: FishVitals
+        characteristics: FishCharacteristics       
+        timestamp: Time
+        note: Text
+    where
+        signatory farmer
+        observer buyer
+        
+        -- regulators action based upon fish farm vital data
+        controller regulator can
+        -- Verfication and report looks good, farmer is following all protocols and data looks hygenic, no signs of Disease Transfer
+            Approve_Vitals: FishfarmVitalsReportId
+                with 
+                    feedback: Text              
+                do 
+                    create this with note=feedback
+        
+        -- Call for immediate healh inspection, maybe an outbreak or Disease Transfer probable to happen
+            nonconsuming Health_Inspection: ContractId FishFarmHealthInspection
+                with 
+                    medicalTeam: Party
+                    feedback: Text
+                do
+                    create FishFarmHealthInspection with  
+                        regulatorInContract = regulator
+                        medicalTeam = medicalTeam
+                        location = location
+                        vitalsDetail = vitals
+                        characteristics = characteristics
+                        note = feedback               
+ 
+-- Regulatory Reporting to fish health check team (like USDA AAPHIS - Department of Agriculture Animal and Plant Health Inspection Service)
+template FishFarmHealthInspection
+    with 
+        regulatorInContract : Party
+        medicalTeam: Party
+        location: FishFarmLocation
+        vitalsDetail : FishVitals
+        characteristics: FishCharacteristics  
+        note : Text
+    where
+        signatory regulatorInContract
+        observer medicalTeam
+        
+        

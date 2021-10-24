@@ -1,0 +1,30 @@
+module DataStructure.FishVitals where
+
+import DataStructure.Coordinates
+
+data FishFarmLocation = FishFarmLocation with
+       location: Coordinates
+       city: Text
+       state: Text
+    deriving (Eq, Show)
+
+data FishVitals = FishVitals with 
+       pH: Decimal
+       temperature: Decimal
+       ammonia: Decimal
+       tds: Decimal
+    deriving (Eq, Show)
+
+data FishCharacteristics = FishCharacteristics with
+       species: CommercialSpecies
+       stage: FishStage
+       avgLength: Decimal
+       quantity: Decimal
+       antibioticsUsed: Text
+       recentDisease: Text
+       feedSize: Int
+   deriving (Eq, Show)
+
+data FishStage = Nursery | Fry | Juvenile | Adult | Harvest | BroodStock deriving (Eq, Ord, Show)
+
+data CommercialSpecies = Carp | Tuna | Rohu | Mackerel | Salmon | Trout | Catla | Tilapia | Catfish | Shrimp deriving (Eq, Ord, Show)

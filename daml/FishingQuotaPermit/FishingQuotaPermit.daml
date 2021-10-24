@@ -1,0 +1,47 @@
+module FishingQuotaPermit.FishingQuotaPermit where
+
+import DataStructure.Permit
+
+template LocalPermit
+  with
+    id: Int
+    owner: Party
+    issuer: Party
+    stakeholder: Party
+    vesselInformation: VesselInformation
+    species: Text
+    startDate: Time
+    endDate: Time
+    timestamp: Time
+  where
+    signatory issuer
+    observer owner
+    key (id, issuer) : (Int, Party)
+    maintainer key._2
+    ensure startDate < endDate
+
+    -- This will simply kill this quota
+    controller issuer can
+        nonconsuming Revoke : () do
+            pure ()
+
+template VesselPermitRequest with
+    id: Int
+    issuer: Party
+    requestor: Party
+    stakeholder: Party
+    vesselInformation: VesselInformation
+    species: Text
+    startDate: Time
+    endDate: Time
+    timestamp: Time
+  where
+    signatory requestor
+    observer stakeholder    
+    agreement "The requesting party is solely responsible to report all data to the regulator and government bodies of its activities. Failing to abide by rules will result in revoking of Permit"
+
+    controller issuer can
+        nonconsuming IssueLocal: ContractId LocalPermit do
+            create LocalPermit with id; owner = requestor;  stakeholder = stakeholder; issuer = issuer; vesselInformation = vesselInformation; species; startDate; endDate; timestamp
+        nonconsuming Deny: () do pure ()
+

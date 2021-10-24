@@ -1,0 +1,66 @@
+module VesselDataManagement.VesselReport where
+
+import DA.Time
+import DataStructure.Coordinates
+import DataStructure.Permit
+
+-- Reporter here can be any company or individual operating marine vessels
+-- regulator here is Commission (like IOTC ~ Indian Ocean Tuna Commission, NPFC ~ North Pacific Fisheries Commission, RFB ~ Regional Fisheries Bodies)
+data ReportContent = ReportContent with
+    vesselName: Text
+    species: Text
+    fishingGear: Text
+    caughtQty: Decimal
+    totalByCatch: Decimal
+    area: Coordinates
+    duration: RelTime
+    timestamp: Time
+  deriving (Eq, Show)
+
+-- This template is used to blacklist any violating or suspicious vessel (like exceeding TAC ~ Total allowable catch, not listed under Record of authorised vessels)
+template BlacklistVessel with
+    raisedBy : Party
+    surveillanceTeam : [Party]
+    subject : ReportCDS
+    category : SuspicionTypes
+  where
+    signatory raisedBy
+    observer surveillanceTeam
+
+-- This template is used to report Marine Catch Documentation Scheme (CDS) by Vessels
+template ReportCDS with
+    reporter : Party
+    regulator : Party
+    content: ReportContent
+ where
+    signatory reporter
+
+    controller regulator can
+      -- the report stays on the ledger 
+      nonconsuming Check : ContractId Verified       
+        with
+            permitValidity: ValidityChoice
+            ecosystemSafety: EcosystemSafety
+            customer: [Party]
+        do
+            create Verified with regulator = regulator; content = content; customer = customer; permitValidity = permitValidity; ecosystemSafety = ecosystemSafety
+
+      -- adds surveillance team as observer (like MCS ~ Monitoring, control and surveillance,
+      -- RFMO ~ Regional Fisheries Management Organisation)
+      nonconsuming Suspicious : ContractId BlacklistVessel
+        with
+          surveillanceTeam : [Party]
+          category : SuspicionTypes
+        do
+          create BlacklistVessel with raisedBy = regulator; surveillanceTeam = surveillanceTeam; subject = this; category = category
+
+template Verified with
+    regulator: Party
+    content: ReportContent
+    customer : [Party]    
+    permitValidity: ValidityChoice
+    ecosystemSafety: EcosystemSafety
+  where
+    signatory regulator
+    observer customer
+
