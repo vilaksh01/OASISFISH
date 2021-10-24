@@ -37,7 +37,8 @@ template VesselPermitRequest with
     timestamp: Time
   where
     signatory requestor
-    observer stakeholder    
+    observer stakeholder
+    -- ensure requestor /= issuer   
     agreement "The requesting party is solely responsible to report all data to the regulator and government bodies of its activities. Failing to abide by rules will result in revoking of Permit"
 
     controller issuer can
