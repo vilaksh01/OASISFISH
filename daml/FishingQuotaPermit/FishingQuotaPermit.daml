@@ -7,7 +7,7 @@ template LocalPermit
     id: Int
     owner: Party
     issuer: Party
-    stakeholder: Party
+    stakeholder: [Party]
     vesselInformation: VesselInformation
     species: Text
     startDate: Time
@@ -22,14 +22,14 @@ template LocalPermit
 
     -- This will simply kill this quota
     controller issuer can
-        nonconsuming Revoke : () do
+        Revoke : () do
             pure ()
 
 template VesselPermitRequest with
     id: Int
     issuer: Party
     requestor: Party
-    stakeholder: Party
+    stakeholder: [Party]
     vesselInformation: VesselInformation
     species: Text
     startDate: Time
