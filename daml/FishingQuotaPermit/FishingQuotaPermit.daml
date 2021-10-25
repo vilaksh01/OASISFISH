@@ -44,5 +44,5 @@ template VesselPermitRequest with
     controller issuer can
         nonconsuming IssueLocal: ContractId LocalPermit do
             create LocalPermit with id; owner = requestor;  stakeholder = stakeholder; issuer = issuer; vesselInformation = vesselInformation; species; startDate; endDate; timestamp
-        nonconsuming Deny: () do pure ()
+        Deny: () do pure ()
 
